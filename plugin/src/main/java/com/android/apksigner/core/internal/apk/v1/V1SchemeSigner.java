@@ -40,10 +40,12 @@ import java.util.TreeMap;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.DERNull;
-import org.bouncycastle.asn1.DEROutputStream;
+//import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
@@ -481,8 +483,10 @@ public abstract class V1SchemeSigner {
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             try (ASN1InputStream asn1 = new ASN1InputStream(sigData.getEncoded())) {
-                DEROutputStream dos = new DEROutputStream(out);
-                dos.writeObject(asn1.readObject());
+//                DEROutputStream dos = new DEROutputStream(out);
+//                dos.writeObject(asn1.readObject());
+                ASN1OutputStream aos = ASN1OutputStream.create(out, ASN1Encoding.DER);
+                aos.writeObject(asn1.readObject());
             }
             return out.toByteArray();
         } catch (OperatorCreationException | CMSException | IOException e) {

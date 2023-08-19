@@ -1,16 +1,17 @@
-import com.android.build.gradle.api.BaseVariant
+//import com.android.build.gradle.api.BaseVariant
 
-apply plugin: 'com.android.application'
+apply plugin: "com.android.application"
 apply plugin: 'walle'
 apply from: rootProject.file('quality.gradle')
 
 buildscript {
     repositories {
         mavenLocal()
+        google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.0'
+        classpath "com.android.tools.build:gradle:7.3.1"
         classpath "com.meituan.android.walle:plugin:latest.integration"
     }
 }
@@ -42,7 +43,7 @@ android {
         sign {
             storeFile file("keystore/sign-debug.keystore")
             storePassword "1234567"
-            keyAlias "debug"
+            keyAlias "meituan"
             keyPassword "12345678"
         }
     }
@@ -65,10 +66,10 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_7
+//        targetCompatibility JavaVersion.VERSION_1_7
+//    }
 
 //    productFlavors {
 //        china {
@@ -83,10 +84,10 @@ configurations.all {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:24.1.1'
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile project(':library')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:support-v4:24.1.1'
+    implementation 'com.android.support:appcompat-v7:24.1.1'
+    implementation project(':library')
 }
 
 walle {
@@ -100,11 +101,20 @@ walle {
 
 // 根据不同的applicationId来配置不同的channelFile／configFile
 afterEvaluate {
-    project.android.applicationVariants.all { BaseVariant variant ->
-        variant.assemble.doFirst {
-            if (variant.applicationId.endsWith(".debug")) {
-
-                project.walle.channelFile = new File("${project.getProjectDir()}/channel_debug")
+//    project.android.applicationVariants.all { BaseVariant variant ->
+//        variant.assemble.doFirst {
+//            if (variant.applicationId.endsWith(".debug")) {
+//
+//                project.walle.channelFile = new File("${project.getProjectDir()}/channel_debug")
+//            }
+//        }
+//    }
+    android.applicationVariants.all { variant ->
+        variant.getAssembleProvider().configure { assemble ->
+            assemble.doFirst {
+                if (variant.applicationId.endsWith(".debug")) {
+                    project.walle.channelFile = new File("${project.getProjectDir()}/channel_debug")
+                }
             }
         }
     }
